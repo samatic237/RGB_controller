@@ -9,6 +9,30 @@ function setBrightness() {
     .then(data => alert(data.message));
 }
 
+function showClock() {
+    // Отправляем команду для активации часов на дисплее
+    fetch('/activate_clock', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Обновляем превью часов
+                updateClockPreview();
+            }
+        });
+}
+
+function updateClockPreview() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    
+    document.getElementById('clock-preview').textContent = `${hours}:${minutes}:${seconds}`;
+}
+
+// Обновляем превью каждую секунду
+setInterval(updateClockPreview, 1000);
+
 // Установка цвета
 function setColor(type) {
     const color = document.getElementById('color-picker').value.slice(1);
@@ -56,7 +80,7 @@ function setDisplayMode() {
 }
 
 // Показать часы
-function showClock() {
+function showClock() { //пока что не реализовано
     // Реализация отправки команды для отображения часов
     // с использованием символьной графики
 }

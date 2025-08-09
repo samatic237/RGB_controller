@@ -30,7 +30,8 @@ def index():
     current_mode = get_setting('current_mode', 0)
     return render_template('index.html', 
                            brightness=brightness, 
-                           current_mode=current_mode)
+                           current_mode=current_mode,
+                           current_year=datetime.now().year)  # Добавлено
 
 @app.route('/set_brightness', methods=['POST'])
 def set_brightness():
@@ -48,6 +49,13 @@ def set_color():
         response = send_command(f"ch_all 0x{color}")
     else:
         response = send_command(f"ch_color {pixel} 0x{color}")
+    
+    return jsonify({'status': 'success', 'message': response})
+
+@app.route('/activate_clock', methods=['POST'])
+def activate_clock():
+    response = send_command("lcd_mode 0")  # Потом сделаю часы
+    set_setting('lcd_mode', 0)
     
     return jsonify({'status': 'success', 'message': response})
 
@@ -118,13 +126,16 @@ def activate_pattern():
     return jsonify({'status': 'success'})
 
 def split_text(text, max_line=20):
+    if not text:
+        return ['']
+    
     words = text.split()
     lines = []
     current_line = ""
     
     for word in words:
-        if len(current_line) + len(word) + 1 <= max_line:
-            current_line += " " + word if current_line else word
+        if len(current_line) + len(word) <= max_line:
+            current_line += (" " + word) if current_line else word
         else:
             lines.append(current_line)
             current_line = word
@@ -132,7 +143,11 @@ def split_text(text, max_line=20):
     if current_line:
         lines.append(current_line)
     
-    return lines[:4]  # Максимум 4 строки
+    # Дополняем до 4 строк
+    while len(lines) < 4:
+        lines.append("")
+    
+    return lines[:4]
 
 if __name__ == '__main__':
     app.run(debug=True)

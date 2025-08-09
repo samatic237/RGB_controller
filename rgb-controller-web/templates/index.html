@@ -7,19 +7,23 @@
         
         <!-- Яркость -->
         <div class="control-group">
-            <label>Яркость: {{ brightness }}</label>
-            <input type="range" min="0" max="255" value="{{ brightness }}" id="brightness-slider">
+            <label>Яркость: <span id="brightness-value">{{ brightness }}</span></label>
+            <input type="range" min="0" max="255" value="{{ brightness }}" 
+                   id="brightness-slider" oninput="document.getElementById('brightness-value').textContent = this.value">
             <button onclick="setBrightness()">Применить</button>
         </div>
         
         <!-- Выбор цвета -->
         <div class="control-group">
             <label>Выберите цвет:</label>
-            <input type="color" id="color-picker">
-            <div>
+            <input type="color" id="color-picker" value="#ffffff">
+            <div class="color-controls">
                 <button onclick="setColor('all')">Применить ко всей ленте</button>
-                <input type="number" min="0" max="59" value="0" id="pixel-input">
-                <button onclick="setColor('single')">Применить к пикселю</button>
+                <div>
+                    <label>Пиксель:</label>
+                    <input type="number" min="0" max="59" value="0" id="pixel-input">
+                    <button onclick="setColor('single')">Применить</button>
+                </div>
             </div>
         </div>
         

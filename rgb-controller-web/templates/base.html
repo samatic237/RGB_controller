@@ -1,28 +1,44 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RGB Controller</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <header>
-        <h1>Управление RGB лентой</h1>
-        <nav>
-            <a href="{{ url_for('index') }}">Главная</a>
-            <a href="{{ url_for('display_control') }}">Дисплей</a>
-            <a href="{{ url_for('sensors') }}">Датчики</a>
-            <a href="{{ url_for('patterns') }}">Паттерны</a>
-        </nav>
-    </header>
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-    <footer>
-        <p>RGB Controller &copy; {{ now.year }}</p>
-    </footer>
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="control-panel">
+        <h2>Управление лентой</h2>
+        
+        <!-- Яркость -->
+        <div class="control-group">
+            <label>Яркость: <span id="brightness-value">{{ brightness }}</span></label>
+            <input type="range" min="0" max="255" value="{{ brightness }}" 
+                   id="brightness-slider" oninput="document.getElementById('brightness-value').textContent = this.value">
+            <button onclick="setBrightness()">Применить</button>
+        </div>
+        
+        <!-- Выбор цвета -->
+        <div class="control-group">
+            <label>Выберите цвет:</label>
+            <input type="color" id="color-picker" value="#ffffff">
+            <div class="color-controls">
+                <button onclick="setColor('all')">Применить ко всей ленте</button>
+                <div>
+                    <label>Пиксель:</label>
+                    <input type="number" min="0" max="59" value="0" id="pixel-input">
+                    <button onclick="setColor('single')">Применить</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Режимы работы -->
+        <div class="control-group">
+            <label>Режим работы:</label>
+            <select id="mode-select">
+                <option value="0" {% if current_mode == 0 %}selected{% endif %}>Ручной</option>
+                <option value="1" {% if current_mode == 1 %}selected{% endif %}>Color Wipe</option>
+                <option value="2" {% if current_mode == 2 %}selected{% endif %}>Rainbow</option>
+                <option value="3" {% if current_mode == 3 %}selected{% endif %}>Theater Chase</option>
+                <option value="4" {% if current_mode == 4 %}selected{% endif %}>Color Fade</option>
+            </select>
+            <button onclick="setMode()">Установить</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
